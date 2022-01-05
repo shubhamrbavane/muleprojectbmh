@@ -92,7 +92,6 @@ payload]]></ee:set-payload>
 		<logger level="INFO" doc:name="Logger" doc:id="b7ccf966-0046-44db-945a-c4e19edbcc72" message="#[payload]"/>
 	</flow>
 	<flow name="bookFlight" doc:id="26fa6598-accb-4d65-bead-1dd811d61c68" >
-		<logger level="INFO" doc:name="Logger" doc:id="a58169c8-8e22-44b9-b1b9-f94f5c318ae3" message="#[payload]"/>
 		<try doc:name="Try" doc:id="89adcb9e-74eb-4141-a30c-73436989960a" >
 			<validation:is-true doc:name="Is true" doc:id="be123741-b2d3-485d-80f3-b5f036521e44" expression="#[isEmpty(payload.flightDetails.airline)]" message="test"/>
 			<error-handler >
