@@ -1,0 +1,33 @@
+#%RAML 1.0 DataType
+
+type: object
+properties:
+  passengerDetails:
+   type: object
+   properties:
+    firstName: string
+    lastName: string
+    age: integer
+    gender: string
+    contactDetails: 
+      type: object
+      properties:
+        mobileNumber: integer
+        emailID: string
+  flightDetails:
+    type: object
+    properties:
+      airline: string
+      code: string
+      price: integer
+      departureDate: date-only
+      departureTime: time-only
+      arrivalTime: time-only
+      totalDuration: string
+      origin: string
+      destination: string
+      plane:
+        type: object
+        properties:
+          classType: string
+          seatsAvailable: integer

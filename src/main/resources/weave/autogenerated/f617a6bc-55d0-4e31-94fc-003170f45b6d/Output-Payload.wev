@@ -1,0 +1,17 @@
+%dw 2.0
+
+type auto_f617a6bc_55d0_4e31_94fc_003170f45b6d_Output_Payload = {
+  departureTime: String, 
+  totalDuration: String, 
+  plane: Array<{    classType: String,     seatsAvailable: Number,     _?: Any  }>, 
+  code: String, 
+  price: Number, 
+  arrivalTime: String, 
+  origin: String, 
+  destination: String, 
+  ID: Number, 
+  departureDate: String, 
+  airline: String, 
+  _?: Any
+}
+

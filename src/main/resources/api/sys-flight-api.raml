@@ -1,0 +1,55 @@
+#%RAML 1.0
+title: sys-flight-API
+
+types:
+  Flight: !include Types/flightWithIdDataType.raml
+  Flights: !include Types/allFlightData.raml
+  BookingDetails: !include Types/bookFlightDataType.raml
+
+
+
+/flights:  
+  get:
+    queryParameters:
+      destination:
+        required: false
+        enum:
+          - PUN
+          - MUM
+          - DEL
+    responses:
+      200:
+        body:
+          application/json:
+            type: Flights[]
+            examples:
+              output: !include examples/allFlightsExample.raml
+
+  post:
+    body:
+      application/json:
+        type: BookingDetails
+        examples:
+          input: !include examples/bookFlightExample.raml
+    responses:
+      201:
+        body:
+          application/json:
+            examples:
+              output: !include examples/bookFlightResponse.raml
+            
+
+  /{airline}:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+              type: Flight
+              examples:
+                output: !include examples/flightwithID.raml
+
+
+                
+   
+          

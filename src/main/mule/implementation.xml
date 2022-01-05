@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
+	<flow name="getAllFlights" doc:id="519d7fa2-3e7b-49f5-bbb3-90650fc9f151">
+		<set-variable value="#[attributes.queryParams]" doc:name="querryParamsVar" doc:id="bb30bb02-e38a-4fe4-a433-9d6edc14996d" variableName="querryParamsVar"/>
+		<logger level="INFO" doc:name="Logger" doc:id="cf425bfb-3835-4c6e-9e53-8d28369c304a" />
+		<scatter-gather doc:name="Scatter-Gather" doc:id="61c63d87-93cc-40c4-9f72-7c77739e4200" >
+			<route >
+				<http:request method="GET" doc:name="spicejet-request" doc:id="582caa33-e826-44f7-abfc-5b9e1bd2780d" config-ref="HTTP_Request_configuration" path="/mocking/api/v1/links/b7162954-3b7c-4cf7-8405-1d6e1a128df9/flights">
+					<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"source" : vars.querryParamsVar.source,
+	"destination" : vars.querryParamsVar.destination
+}]]]></http:query-params>
+				</http:request>
+			</route>
+			<route >
+				<http:request method="GET" doc:name="jetairways-request" doc:id="a1d70f0f-42b1-4dc6-9928-c45447d2a740" config-ref="HTTP_Request_configuration" path="/mocking/api/v1/links/50b20ab2-49b1-4c74-ba9f-123be4a629c6/flights">
+					<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"source" : vars.querryParamsVar.source,
+	"destination" : vars.querryParamsVar.destination
+}]]]></http:query-params>
+				</http:request>
+			</route>
+			<route >
+				<http:request method="GET" doc:name="indigo-request" doc:id="19b66c18-41a9-4041-a4f5-652958dc58fd" config-ref="HTTP_Request_configuration" path="/mocking/api/v1/links/aef34b55-d7f6-4950-a53f-1ebdfbb63358/flights">
+					<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"source" : vars.querryParamsVar.source,
+	"destination" : vars.querryParamsVar.destination
+}]]]></http:query-params>
+				</http:request>
+			</route>
+		</scatter-gather>
+		<ee:transform doc:name="Transform to JSON" doc:id="9ab04642-0a17-4640-9b97-1a989722056d">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="1484b67a-c4fa-4d2b-888b-2cbdef2df08c" message="#[payload]"/>
+	</flow>
+	<flow name="getFlightByName" doc:id="f617a6bc-55d0-4e31-94fc-003170f45b6d" >
+		<choice doc:name="Choice" doc:id="798af6ea-ee06-43f1-8c18-861798c5eee2" >
+			<when expression='#[attributes.uriParams.airline == "spicejet"]'>
+				<http:request method="GET" doc:name="spicejet-Request" doc:id="0317d756-c9d4-44a5-926b-ce8fb4f01db4" config-ref="HTTP_Request_configuration" url="http://anypoint.mulesoft.com/mocking/api/v1/links/b7162954-3b7c-4cf7-8405-1d6e1a128df9/flights/{airline}">
+					<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"airline" : attributes.uriParams.airline
+}]]]></http:uri-params>
+				</http:request>
+			</when>
+			<when expression='#[attributes.uriParams.airline == "jetairways"]'>
+				<http:request method="GET" doc:name="jetairways-Request" doc:id="64735095-96f1-4fdf-aacf-ed21dab56c9a" config-ref="HTTP_Request_configuration" url="http://anypoint.mulesoft.com/mocking/api/v1/links/50b20ab2-49b1-4c74-ba9f-123be4a629c6/flights/{airline}">
+					<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"airline" : attributes.uriParams.airline
+}]]]></http:uri-params>
+				</http:request>
+			</when>
+			<otherwise >
+				<http:request method="GET" doc:name="indigo-Request" doc:id="708e4277-31ad-4e9c-8009-45aeb3f06a54" config-ref="HTTP_Request_configuration" url="http://anypoint.mulesoft.com/mocking/api/v1/links/aef34b55-d7f6-4950-a53f-1ebdfbb63358/flights/{airline}">
+					<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"airline" : attributes.uriParams.airline
+}]]]></http:uri-params>
+				</http:request>
+			</otherwise>
+		</choice>
+		<ee:transform doc:name="Transform Message" doc:id="3635166e-bd0d-4916-946e-b83c0bb5592e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="b7ccf966-0046-44db-945a-c4e19edbcc72" message="#[payload]"/>
+	</flow>
+	<flow name="bookFlight" doc:id="26fa6598-accb-4d65-bead-1dd811d61c68" >
+		<logger level="INFO" doc:name="Logger" doc:id="a58169c8-8e22-44b9-b1b9-f94f5c318ae3" message="#[payload]"/>
+		<try doc:name="Try" doc:id="89adcb9e-74eb-4141-a30c-73436989960a" >
+			<validation:is-true doc:name="Is true" doc:id="be123741-b2d3-485d-80f3-b5f036521e44" expression="#[isEmpty(payload.flightDetails.airline)]" message="test"/>
+			<error-handler >
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="1afd6d74-2c7e-4154-81f7-db6e9947f2d2" type="VALIDATION:INVALID_BOOLEAN">
+					<ee:transform doc:name="Transform Message" doc:id="6947ad5e-e2be-45b6-acdf-e5f546158d26" >
+						<ee:message >
+							<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+				</on-error-continue>
+			</error-handler>
+		</try>
+		<choice doc:name="Choice" doc:id="44ea32a6-4b19-4b40-a102-6decff563372" >
+			<when expression='#[payload.flightDetails.airline == "spicejet"]'>
+				<http:request method="POST" doc:name="spicejet-Request" doc:id="66f125a4-6671-4f2d-8df1-371504dcbb36" config-ref="HTTP_Request_configuration" url="https://anypoint.mulesoft.com/mocking/api/v1/links/b7162954-3b7c-4cf7-8405-1d6e1a128df9/flights"/>
+			</when>
+			<when expression='#[payload.flightDetails.airline == "jetairways"]'>
+				<http:request method="POST" doc:name="jetairways-Request" doc:id="f12a40a7-dd19-423d-b205-c35df5412385" config-ref="HTTP_Request_configuration" url="https://anypoint.mulesoft.com/mocking/api/v1/links/50b20ab2-49b1-4c74-ba9f-123be4a629c6/flights"/>
+			</when>
+			<otherwise >
+				<http:request method="POST" doc:name="indigo-Request" doc:id="32867960-1a7d-432b-95a7-829047b6b259" config-ref="HTTP_Request_configuration" url="https://anypoint.mulesoft.com/mocking/api/v1/links/aef34b55-d7f6-4950-a53f-1ebdfbb63358/flights"/>
+			</otherwise>
+		</choice>
+		<ee:transform doc:name="Transform Message" doc:id="f514da1d-e33d-4d60-8251-2df417783a16" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="6014ece8-a869-4a37-b092-699f3fe7dbce" />
+	</flow>
+</mule>
