@@ -11,7 +11,7 @@ http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mu
 		<logger level="INFO" doc:name="Logger" doc:id="cf425bfb-3835-4c6e-9e53-8d28369c304a" />
 		<scatter-gather doc:name="Scatter-Gather" doc:id="61c63d87-93cc-40c4-9f72-7c77739e4200" >
 			<route >
-				<http:request method="GET" doc:name="spicejet-request" doc:id="582caa33-e826-44f7-abfc-5b9e1bd2780d" config-ref="HTTP_Request_configuration" path="/mocking/api/v1/links/b7162954-3b7c-4cf7-8405-1d6e1a128df9/flights">
+				<http:request method="GET" doc:name="spicejet-request" doc:id="582caa33-e826-44f7-abfc-5b9e1bd2780d" config-ref="HTTP_Request_configuration" url="http://anypoint.mulesoft.com/mocking/api/v1/links/b7162954-3b7c-4cf7-8405-1d6e1a128df9/flights">
 					<http:query-params ><![CDATA[#[output application/java
 ---
 {
@@ -21,7 +21,7 @@ http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mu
 				</http:request>
 			</route>
 			<route >
-				<http:request method="GET" doc:name="jetairways-request" doc:id="a1d70f0f-42b1-4dc6-9928-c45447d2a740" config-ref="HTTP_Request_configuration" path="/mocking/api/v1/links/50b20ab2-49b1-4c74-ba9f-123be4a629c6/flights">
+				<http:request method="GET" doc:name="jetairways-request" doc:id="a1d70f0f-42b1-4dc6-9928-c45447d2a740" config-ref="HTTP_Request_configuration" url="https://anypoint.mulesoft.com/mocking/api/v1/links/50b20ab2-49b1-4c74-ba9f-123be4a629c6/flights">
 					<http:query-params ><![CDATA[#[output application/java
 ---
 {
@@ -31,7 +31,7 @@ http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mu
 				</http:request>
 			</route>
 			<route >
-				<http:request method="GET" doc:name="indigo-request" doc:id="19b66c18-41a9-4041-a4f5-652958dc58fd" config-ref="HTTP_Request_configuration" path="/mocking/api/v1/links/aef34b55-d7f6-4950-a53f-1ebdfbb63358/flights">
+				<http:request method="GET" doc:name="indigo-request" doc:id="19b66c18-41a9-4041-a4f5-652958dc58fd" config-ref="HTTP_Request_configuration" url="https://anypoint.mulesoft.com/mocking/api/v1/links/aef34b55-d7f6-4950-a53f-1ebdfbb63358/flights">
 					<http:query-params ><![CDATA[#[output application/java
 ---
 {
@@ -109,7 +109,7 @@ payload]]></ee:set-payload>
 		</try>
 		<choice doc:name="Choice" doc:id="44ea32a6-4b19-4b40-a102-6decff563372" >
 			<when expression='#[payload.flightDetails.airline == "spicejet"]'>
-				<http:request method="POST" doc:name="spicejet-Request" doc:id="66f125a4-6671-4f2d-8df1-371504dcbb36" config-ref="HTTP_Request_configuration" url="https://anypoint.mulesoft.com/mocking/api/v1/links/b7162954-3b7c-4cf7-8405-1d6e1a128df9/flights"/>
+				<http:request method="POST" doc:name="spicejet-Request" doc:id="66f125a4-6671-4f2d-8df1-371504dcbb36" config-ref="HTTP_Request_configuration" path="/mocking/api/v1/links/b7162954-3b7c-4cf7-8405-1d6e1a128df9/flights"/>
 			</when>
 			<when expression='#[payload.flightDetails.airline == "jetairways"]'>
 				<http:request method="POST" doc:name="jetairways-Request" doc:id="f12a40a7-dd19-423d-b205-c35df5412385" config-ref="HTTP_Request_configuration" url="https://anypoint.mulesoft.com/mocking/api/v1/links/50b20ab2-49b1-4c74-ba9f-123be4a629c6/flights"/>
